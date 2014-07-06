@@ -12,7 +12,7 @@ Window {
     MouseArea {
         anchors.fill: parent
         onClicked: {
-            Qt.quit();
+            pViewAct.incrementCurrentIndex()
         }
     }
 
@@ -42,6 +42,78 @@ Window {
             hInicio: "20:00"
             hFin: "22:00"
         }
+        ListElement
+        {
+            nombre: "Actividad 4"
+            tipo: "Rol en mesa"
+            hInicio: "16:00"
+            hFin: "19:00"
+        }
+        ListElement
+        {
+            nombre: "Actividad 5"
+            tipo: "Rol en mesa"
+            hInicio: "16:00"
+            hFin: "19:00"
+        }
+        ListElement
+        {
+            nombre: "Actividad 6"
+            tipo: "Rol en mesa"
+            hInicio: "16:00"
+            hFin: "19:00"
+        }
+        ListElement
+        {
+            nombre: "Actividad 7"
+            tipo: "Rol en mesa"
+            hInicio: "16:00"
+            hFin: "19:00"
+        }
+        ListElement
+        {
+            nombre: "Actividad 8"
+            tipo: "Rol en mesa"
+            hInicio: "16:00"
+            hFin: "19:00"
+        }
+        ListElement
+        {
+            nombre: "Actividad 9"
+            tipo: "Rol en mesa"
+            hInicio: "16:00"
+            hFin: "19:00"
+        }
+        ListElement
+        {
+            nombre: "Actividad 10"
+            tipo: "Rol en mesa"
+            hInicio: "16:00"
+            hFin: "19:00"
+        }
+        ListElement
+        {
+            nombre: "Actividad 11"
+            tipo: "Rol en mesa"
+            hInicio: "16:00"
+            hFin: "19:00"
+        }
+        ListElement
+        {
+            nombre: "Actividad 12"
+            tipo: "Rol en mesa"
+            hInicio: "16:00"
+            hFin: "19:00"
+        }
+        ListElement
+        {
+            nombre: "Actividad 13"
+            tipo: "Rol en mesa"
+            hInicio: "16:00"
+            hFin: "19:00"
+        }
+
+
     }
 
     //Elemento RELOJ
@@ -72,33 +144,27 @@ Window {
 
     //Elemento LISTADO
 
-    Rectangle
+    PathView
     {
-        id: listaContainer
+        id: pViewAct
+        model: actDebugModel
         anchors.top: reloj.bottom
+        width: parent.width / 4
+
         anchors.right: parent.right
         anchors.bottom: parent.bottom
-        anchors.topMargin: 15
         anchors.rightMargin: 5
-        anchors.bottomMargin: 10
-        width: parent.width / 4
-        color: "white"
 
-        PathView
-        {
-            id: pViewAct
-            model: actDebugModel
-            anchors.fill: listaContainer
-
-            path: Path {
-                startX: pViewAct.width /2 ; startY: 0;
-                PathLine {
-                    x: pViewAct.width /2
-                    y: pViewAct.height
-                }
-
+        delegate: DelegadoListaActividad {}
+        path: Path {
+            startX: pViewAct.width/2 ; startY: reloj.height-20;
+            PathLine {
+                x: pViewAct.width/2
+                y: pViewAct.height
             }
-            pathItemCount: 9
+
         }
+        pathItemCount: 8
     }
+
 }
