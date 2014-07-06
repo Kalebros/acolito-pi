@@ -3,6 +3,7 @@ import QtQuick.Window 2.1
 import QtGraphicalEffects 1.0
 
 Window {
+    id: windowRoot
     visible: true
     width: 360
     height: 360
@@ -12,6 +13,34 @@ Window {
         anchors.fill: parent
         onClicked: {
             Qt.quit();
+        }
+    }
+
+    //Modelo listo para depuracion
+    ListModel
+    {
+        id: actDebugModel
+
+        ListElement
+        {
+            nombre: "Actividad 1"
+            tipo: "Rol en mesa"
+            hInicio: "16:00"
+            hFin: "19:00"
+        }
+        ListElement
+        {
+            nombre: "Actividad 2"
+            tipo: "Wargames"
+            hInicio: "17:00"
+            hFin: "18:00"
+        }
+        ListElement
+        {
+            nombre: "Actividad 3"
+            tipo: "Juegos de mesa y cartas"
+            hInicio: "20:00"
+            hFin: "22:00"
         }
     }
 
@@ -41,5 +70,18 @@ Window {
         source: reloj
     }
 
-    //
+    //Elemento LISTADO
+
+    Rectangle
+    {
+        id: listaContainer
+        anchors.top: reloj.bottom
+        anchors.right: parent.right
+        anchors.bottom: parent.bottom
+        anchors.topMargin: 15
+        anchors.rightMargin: 5
+        anchors.bottomMargin: 10
+        width: parent.width / 4
+        color: "white"
+    }
 }
