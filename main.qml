@@ -83,5 +83,22 @@ Window {
         anchors.bottomMargin: 10
         width: parent.width / 4
         color: "white"
+
+        PathView
+        {
+            id: pViewAct
+            model: actDebugModel
+            anchors.fill: listaContainer
+
+            path: Path {
+                startX: pViewAct.width /2 ; startY: 0;
+                PathLine {
+                    x: pViewAct.width /2
+                    y: pViewAct.height
+                }
+
+            }
+            pathItemCount: 9
+        }
     }
 }
