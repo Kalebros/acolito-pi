@@ -51,7 +51,8 @@ Item {
             anchors.leftMargin: 5 +(parent.width / 100)
             height: 2 * (parent.height / 3)
             font.pixelSize: 100
-            fontSizeMode: Text.Fit
+            fontSizeMode: Text.VerticalFit
+            elide: Text.ElideRight
             text: model.nombre
             font.weight: Font.Light
 

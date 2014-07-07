@@ -147,7 +147,7 @@ Window {
     PathView
     {
         id: pViewAct
-        model: actDebugModel
+        model: modeloAct
         anchors.top: reloj.bottom
         width: parent.width / 4
 
