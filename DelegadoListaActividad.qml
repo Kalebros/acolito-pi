@@ -8,13 +8,13 @@ Item {
     property double heightParent:0
     width: parent.width
     height: (parent.height / 10) -5
-    antialiasing: true
 
     Rectangle
     {
         id: delegateContainer
         anchors.fill: parent
         color: "white"
+        antialiasing: true
 
         Rectangle
         {

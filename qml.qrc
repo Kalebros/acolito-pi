@@ -3,5 +3,6 @@
         <file>main.qml</file>
         <file>RelojAcolito.qml</file>
         <file>DelegadoListaActividad.qml</file>
+        <file>DelegadoActividad.qml</file>
     </qresource>
 </RCC>

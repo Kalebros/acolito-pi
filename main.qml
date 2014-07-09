@@ -12,109 +12,11 @@ Window {
     MouseArea {
         anchors.fill: parent
         onClicked: {
-            pViewAct.incrementCurrentIndex()
+            pViewAct.incrementCurrentIndex();
+            pViewPrincipal.incrementCurrentIndex();
         }
     }
 
-    //Modelo listo para depuracion
-    ListModel
-    {
-        id: actDebugModel
-
-        ListElement
-        {
-            nombre: "Actividad 1"
-            tipo: "Rol en mesa"
-            hInicio: "16:00"
-            hFin: "19:00"
-        }
-        ListElement
-        {
-            nombre: "Actividad 2"
-            tipo: "Wargames"
-            hInicio: "17:00"
-            hFin: "18:00"
-        }
-        ListElement
-        {
-            nombre: "Actividad 3"
-            tipo: "Juegos de mesa y cartas"
-            hInicio: "20:00"
-            hFin: "22:00"
-        }
-        ListElement
-        {
-            nombre: "Actividad 4"
-            tipo: "Rol en mesa"
-            hInicio: "16:00"
-            hFin: "19:00"
-        }
-        ListElement
-        {
-            nombre: "Actividad 5"
-            tipo: "Rol en mesa"
-            hInicio: "16:00"
-            hFin: "19:00"
-        }
-        ListElement
-        {
-            nombre: "Actividad 6"
-            tipo: "Rol en mesa"
-            hInicio: "16:00"
-            hFin: "19:00"
-        }
-        ListElement
-        {
-            nombre: "Actividad 7"
-            tipo: "Rol en mesa"
-            hInicio: "16:00"
-            hFin: "19:00"
-        }
-        ListElement
-        {
-            nombre: "Actividad 8"
-            tipo: "Rol en mesa"
-            hInicio: "16:00"
-            hFin: "19:00"
-        }
-        ListElement
-        {
-            nombre: "Actividad 9"
-            tipo: "Rol en mesa"
-            hInicio: "16:00"
-            hFin: "19:00"
-        }
-        ListElement
-        {
-            nombre: "Actividad 10"
-            tipo: "Rol en mesa"
-            hInicio: "16:00"
-            hFin: "19:00"
-        }
-        ListElement
-        {
-            nombre: "Actividad 11"
-            tipo: "Rol en mesa"
-            hInicio: "16:00"
-            hFin: "19:00"
-        }
-        ListElement
-        {
-            nombre: "Actividad 12"
-            tipo: "Rol en mesa"
-            hInicio: "16:00"
-            hFin: "19:00"
-        }
-        ListElement
-        {
-            nombre: "Actividad 13"
-            tipo: "Rol en mesa"
-            hInicio: "16:00"
-            hFin: "19:00"
-        }
-
-
-    }
 
     //Elemento RELOJ
     RelojAcolito
@@ -124,7 +26,7 @@ Window {
         anchors.right: parent.right
         anchors.topMargin: 5
         anchors.rightMargin: 5
-        height: parent.height / 10
+        height: (parent.height / 10)+10
         width: parent.width / 4
         colorFuente:"black"
         colorFondo: "white"
@@ -165,6 +67,48 @@ Window {
 
         }
         pathItemCount: 8
+    }
+
+    //Elemento ACTIVIDAD
+
+    Rectangle
+    {
+        id: actividadBackgr
+        color: "white"
+        anchors.top: parent.top
+        anchors.bottom: parent.bottom
+        anchors.left: parent.left
+        anchors.right: pViewAct.left
+        anchors.bottomMargin: 10
+        anchors.leftMargin: 10
+        anchors.rightMargin: 10
+        anchors.topMargin: 5
+    }
+
+    PathView
+    {
+        id: pViewPrincipal
+        model: modeloAct
+        anchors.top: parent.top
+        anchors.bottom: parent.bottom
+        anchors.left: parent.left
+        anchors.right: pViewAct.left
+        anchors.rightMargin: 10
+        anchors.leftMargin: 10
+        anchors.topMargin: 5
+        anchors.bottomMargin: 10
+
+        delegate: DelegadoActividad {}
+        path: Path {
+            startX: pViewPrincipal.width/2 ; startY: pViewPrincipal.height /2;
+            PathLine {
+                x: pViewPrincipal.width/2
+                y: pViewPrincipal.height
+            }
+
+        }
+
+        pathItemCount: 1
     }
 
 }
