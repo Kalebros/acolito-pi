@@ -16,6 +16,16 @@
 //    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /***************************************************************************/
 
+
+///*****************************************************************///
+// IMPORTANTE: Para lanzar la aplicacion en una Raspberry Pi,
+// es necesario especificar que utilize el plugin eglfs, ya que
+// por defecto siempre intenta usar el xcb y en la raspberry falla.
+// Para especificar el plugin, utilizar la opcion '-platform eglfs'
+// al lanzar la aplicacion
+///*****************************************************************///
+
+
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
@@ -23,6 +33,8 @@
 #include <QList>
 #include <QStandardItem>
 #include <QDebug>
+#include <QWindow>
+#include <QWindowList>
 
 #include "qmlmodelointermedio.h"
 
@@ -205,5 +217,7 @@ int main(int argc, char *argv[])
 
     engine.load(QUrl(QStringLiteral("qrc:///main.qml")));
 
+    //Es posible que necesite este hack para que funcione en la raspberry
+    app.allWindows().first()->showFullScreen();
     return app.exec();
 }

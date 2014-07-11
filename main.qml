@@ -8,6 +8,7 @@ Window {
     width: 360
     height: 360
     color: "#e0e0e0"
+    visibility: "FullScreen"
 
     MouseArea {
         anchors.fill: parent
