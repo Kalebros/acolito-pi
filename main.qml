@@ -18,6 +18,15 @@ Window {
         }
     }
 
+    Timer {
+        interval: 1000; running: true; repeat: true;
+        onTriggered: {
+            pViewAct.incrementCurrentIndex();
+            pViewPrincipal.incrementCurrentIndex();
+        }
+    }
+
+
 
     //Elemento RELOJ
     RelojAcolito
@@ -104,12 +113,12 @@ Window {
             startX: pViewPrincipal.width/2 ; startY: pViewPrincipal.height /2;
             PathLine {
                 x: pViewPrincipal.width/2
-                y: pViewPrincipal.height
+                y: pViewPrincipal.height*4
             }
 
         }
 
-        pathItemCount: 1
+        pathItemCount: 3
     }
 
 }
