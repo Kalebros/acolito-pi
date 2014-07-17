@@ -45,14 +45,60 @@
 #include <QJsonValue>
 
 #include "qmlmodelointermedio.h"
+#include "acopiconfiguracion.h"
 
-int main(int argc, char *argv[])
+/*!
+ * Crea la configuracion a partir de un archivo JSON
+ */
+
+void buildConfiguracionJSON(AcoPiConfiguracion &cObject)
 {
-    QGuiApplication app(argc, argv);
+    QFileInfo infoConfig("config.json");
+    if(!infoConfig.exists()) {
+        qDebug() << "No existe archivo de configuracion, cargando configuracion por defecto...";
+        cObject.setModoAcolito(AcoPiConfiguracion::Actividad);
+        cObject.setModoOperacion(AcoPiConfiguracion::Depuracion);
+        cObject.setItemContainerMargins(0);
+        qDebug() << "Configuracion READY!";
+        return;
+    }
 
-    //Crear modelo de depuracion
+    QFile fileConfig(infoConfig.absoluteFilePath());
+    if(!fileConfig.open(QFile::Text | QFile::ReadOnly)) {
+        qDebug() << "No se pudo abrir el archivo, cargando configuracion por defecto...";
+        cObject.setModoAcolito(AcoPiConfiguracion::Actividad);
+        cObject.setModoOperacion(AcoPiConfiguracion::Depuracion);
+        cObject.setItemContainerMargins(0);
+        qDebug() << "Configuracion READY!";
+        return;
+    }
 
-    QStandardItemModel *modelo=new QStandardItemModel(&app);
+    QJsonObject data=QJsonDocument::fromJson(fileConfig.readAll()).object();
+
+    if(data.contains("debug_mode")) {
+        if(data.value("debug_mode").toBool()) {
+            cObject.setModoOperacion(AcoPiConfiguracion::Depuracion);
+        }
+        else cObject.setModoOperacion(AcoPiConfiguracion::Database);
+    } else cObject.setModoOperacion(AcoPiConfiguracion::Depuracion);
+
+    cObject.setDatabaseHost(data.value("database").toObject().value("host").toString());
+    cObject.setDatabaseUser(data.value("database").toObject().value("user").toString());
+    cObject.setDatabasePass(data.value("database").toObject().value("password").toString());
+    cObject.setDatabasePort(data.value("database").toObject().value("port").toDouble());
+    cObject.setDatabaseSchema(data.value("database").toObject().value("schema").toString());
+    cObject.setPathAnuncios(data.value("path_modo_anuncio").toString());
+    cObject.setItemContainerMargins(data.value("item_container_margins").toDouble());
+    qDebug() << "Configuracion READY!";
+}
+
+/*!
+ * Crea el modelo de depuracion
+ */
+
+QAbstractItemModel *modeloDepuracion()
+{
+    QStandardItemModel *modelo=new QStandardItemModel(qApp);
 
     QList<QStandardItem*> fila;
 
@@ -215,40 +261,40 @@ int main(int argc, char *argv[])
 
     modelo->appendRow(fila);
 
+    return modelo;
+}
 
-    //Preparar modelo intermedio
-    QmlModeloIntermedio *mIntermedio=new QmlModeloIntermedio(modelo,&app);
+int main(int argc, char *argv[])
+{
+    QGuiApplication app(argc, argv);
+
+    //Cargar configuracion
+    AcoPiConfiguracion configuracion;
+
+    buildConfiguracionJSON(configuracion);
 
     QQmlApplicationEngine engine;
 
-    //Cargar datos de configuracion
+    QmlModeloIntermedio *mIntermedio=0;
 
-    //Mejor utilizo una clase para esto, queda más limpio
-    if(!QFileInfo::exists("config.json")) {
-        qDebug() << "Archivo de configuracion: NOT FOUND" << endl << "Cargando configuracion DEBUG... LISTO!";
-        engine.rootContext()->setContextProperty("item_container_margins","0");
+    //Cargar datos de configuracion
+    if(configuracion.modoOperacion()==AcoPiConfiguracion::Depuracion) {
+        //Preparar modelo intermedio
+        mIntermedio=new QmlModeloIntermedio(modeloDepuracion(),&app);
         engine.rootContext()->setContextProperty("modeloAct",mIntermedio);
+    }
+    else {
+        qDebug() << "Modo de operacion aún no soportado.";
+        exit(0);
+    }
+
+    engine.rootContext()->setContextProperty("item_container_margins",configuracion.itemContainerMargins());
+
+    if(configuracion.modoAcolito()==AcoPiConfiguracion::Actividad)
         engine.load(QUrl(QStringLiteral("qrc:///main.qml")));
-    } else {
-        qDebug() << "Archivo de configuracion: config.json";
-        QFile config("config.json");
-        if(!config.open(QFile::Text | QFile::ReadOnly))
-        {
-            qDebug() << "Abriendo archivo... ERROR"<< endl << "Cargando configuracion DEBUG... LISTO!";
-                        engine.rootContext()->setContextProperty("item_container_margins","0");
-                        engine.rootContext()->setContextProperty("modeloAct",mIntermedio);
-                        engine.load(QUrl(QStringLiteral("qrc:///main.qml")));
-        } else {
-            QJsonObject objConfig=QJsonDocument::fromJson(config.readAll()).object();
-            if(objConfig.value("debug_mode").toBool()) {
-                qDebug() << "Modo DEBUG, cargando modelo de depuracion... LISTO!";
-                engine.rootContext()->setContextProperty("modeloAct",mIntermedio);
-            }
-            qDebug() << "item_container_margins: " << objConfig.value("item_container_margins").toDouble();
-            engine.rootContext()->setContextProperty("item_container_margins",objConfig.value("item_container_margins").toDouble());
-            qDebug() << "Modo de trabajo: " << objConfig.value("modo").toString() <<endl;
-            engine.load(QUrl(QStringLiteral("qrc:///main.qml")));
-        }
+    else {
+        qDebug() << "Modo de acolito aún no soportado.";
+        exit(0);
     }
 
     //Es posible que necesite este hack para que funcione en la raspberry

@@ -3,7 +3,8 @@ TEMPLATE = app
 QT += qml quick
 
 SOURCES += main.cpp \
-    qmlmodelointermedio.cpp
+    qmlmodelointermedio.cpp \
+    acopiconfiguracion.cpp
 
 RESOURCES += qml.qrc
 
@@ -14,4 +15,5 @@ QML_IMPORT_PATH =
 include(deployment.pri)
 
 HEADERS += \
-    qmlmodelointermedio.h
+    qmlmodelointermedio.h \
+    acopiconfiguracion.h
