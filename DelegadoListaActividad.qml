@@ -28,11 +28,16 @@ Item {
             width: parent.width / 6
             color: delegado.PathView.isCurrentItem ? "#03a9f4" : "#673ab7"
 
+            Behavior on color
+            {
+                ColorAnimation { duration: 100 }
+            }
+
             Text
             {
                 id: textInitial
                 anchors.fill: parent
-                text: model.tipo[0]
+                text: (model.tipo=="Rol en vivo") ? "Rv" : model.tipo[0]
                 color: "white"
                 font.family: "Roboto"
                 font.pixelSize: 100
