@@ -25,6 +25,14 @@ Window {
             }
         }
 
+        Timer {
+            interval: 5000; running: true; repeat: true;
+            onTriggered: {
+                if(reloj.state=="modoActividad")
+                    reloj.state="modoAnuncio"
+                else reloj.state="modoActividad";
+            }
+        }
         //Elemento RELOJ
         RelojAcolito
         {
