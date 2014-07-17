@@ -35,6 +35,14 @@
 #include <QDebug>
 #include <QWindow>
 #include <QWindowList>
+#include <QFile>
+#include <QFileInfo>
+
+
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
+#include <QJsonValue>
 
 #include "qmlmodelointermedio.h"
 
@@ -207,15 +215,41 @@ int main(int argc, char *argv[])
 
     modelo->appendRow(fila);
 
+
     //Preparar modelo intermedio
     QmlModeloIntermedio *mIntermedio=new QmlModeloIntermedio(modelo,&app);
 
-    qDebug() << mIntermedio->roleNames();
-
     QQmlApplicationEngine engine;
-    engine.rootContext()->setContextProperty("modeloAct",mIntermedio);
 
-    engine.load(QUrl(QStringLiteral("qrc:///main.qml")));
+    //Cargar datos de configuracion
+
+    //Mejor utilizo una clase para esto, queda más limpio
+    if(!QFileInfo::exists("config.json")) {
+        qDebug() << "Archivo de configuracion: NOT FOUND" << endl << "Cargando configuracion DEBUG... LISTO!";
+        engine.rootContext()->setContextProperty("item_container_margins","0");
+        engine.rootContext()->setContextProperty("modeloAct",mIntermedio);
+        engine.load(QUrl(QStringLiteral("qrc:///main.qml")));
+    } else {
+        qDebug() << "Archivo de configuracion: config.json";
+        QFile config("config.json");
+        if(!config.open(QFile::Text | QFile::ReadOnly))
+        {
+            qDebug() << "Abriendo archivo... ERROR"<< endl << "Cargando configuracion DEBUG... LISTO!";
+                        engine.rootContext()->setContextProperty("item_container_margins","0");
+                        engine.rootContext()->setContextProperty("modeloAct",mIntermedio);
+                        engine.load(QUrl(QStringLiteral("qrc:///main.qml")));
+        } else {
+            QJsonObject objConfig=QJsonDocument::fromJson(config.readAll()).object();
+            if(objConfig.value("debug_mode").toBool()) {
+                qDebug() << "Modo DEBUG, cargando modelo de depuracion... LISTO!";
+                engine.rootContext()->setContextProperty("modeloAct",mIntermedio);
+            }
+            qDebug() << "item_container_margins: " << objConfig.value("item_container_margins").toDouble();
+            engine.rootContext()->setContextProperty("item_container_margins",objConfig.value("item_container_margins").toDouble());
+            qDebug() << "Modo de trabajo: " << objConfig.value("modo").toString() <<endl;
+            engine.load(QUrl(QStringLiteral("qrc:///main.qml")));
+        }
+    }
 
     //Es posible que necesite este hack para que funcione en la raspberry
     app.allWindows().first()->showFullScreen();

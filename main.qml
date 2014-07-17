@@ -14,6 +14,7 @@ Window {
     {
         id: itemContainer
         anchors.fill: parent
+        anchors.margins: item_container_margins
 
 
         MouseArea {
