@@ -82,6 +82,11 @@ void buildConfiguracionJSON(AcoPiConfiguracion &cObject)
         else cObject.setModoOperacion(AcoPiConfiguracion::Database);
     } else cObject.setModoOperacion(AcoPiConfiguracion::Depuracion);
 
+    if(data.value("modo").toString()=="ACTIVIDAD")
+        cObject.setModoAcolito(AcoPiConfiguracion::Actividad);
+    if(data.value("modo").toString()=="ANUNCIOS")
+        cObject.setModoAcolito(AcoPiConfiguracion::Anuncios);
+
     cObject.setDatabaseHost(data.value("database").toObject().value("host").toString());
     cObject.setDatabaseUser(data.value("database").toObject().value("user").toString());
     cObject.setDatabasePass(data.value("database").toObject().value("password").toString());
@@ -290,11 +295,20 @@ int main(int argc, char *argv[])
 
     engine.rootContext()->setContextProperty("item_container_margins",configuracion.itemContainerMargins());
 
-    if(configuracion.modoAcolito()==AcoPiConfiguracion::Actividad)
+    AcoPiConfiguracion::ModoAcolito mode=configuracion.modoAcolito();
+
+    switch(mode)
+    {
+    case AcoPiConfiguracion::Actividad:
         engine.load(QUrl(QStringLiteral("qrc:///main.qml")));
-    else {
-        qDebug() << "Modo de acolito aún no soportado.";
+        break;
+    case AcoPiConfiguracion::Anuncios:
+        engine.load(QUrl(QStringLiteral("qrc:///mainAnuncio.qml")));
+        break;
+    default:
+        qDebug() << "Modo no soportado.";
         exit(0);
+        break;
     }
 
     //Es posible que necesite este hack para que funcione en la raspberry
