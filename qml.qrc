@@ -5,5 +5,6 @@
         <file>DelegadoListaActividad.qml</file>
         <file>DelegadoActividad.qml</file>
         <file>mainAnuncio.qml</file>
+        <file>DelegadoAnuncio.qml</file>
     </qresource>
 </RCC>

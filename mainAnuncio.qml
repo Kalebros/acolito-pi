@@ -26,11 +26,28 @@ Window {
         }
 
         Timer {
-            interval: 5000; running: true; repeat: true;
+            interval: 2000; running: true; repeat: true;
             onTriggered: {
-                if(reloj.state=="modoActividad")
-                    reloj.state="modoAnuncio"
-                else reloj.state="modoActividad";
+                if(reloj.state=="modoActividad") {
+                    if(pViewAct.currentIndex<pViewPrincipal.count-1) {
+                        pViewAct.incrementCurrentIndex();
+                        pViewPrincipal.incrementCurrentIndex();
+                    }
+                    else {
+                        pViewAnuncio.currentIndex=0;
+                        reloj.state="modoAnuncio";
+                    }
+                }
+                else {
+                    if(pViewAnuncio.currentIndex<pViewAnuncio.count-1) {
+                        pViewAnuncio.incrementCurrentIndex();
+                    }
+                    else {
+                        pViewAct.currentIndex=0;
+                        pViewPrincipal.currentIndex=0;
+                        reloj.state="modoActividad";
+                    }
+                }
             }
         }
         //Elemento RELOJ
@@ -67,6 +84,11 @@ Window {
                         target: anuncioBackgr
                         opacity: 0
                     }
+                    PropertyChanges {
+                        target: pViewAnuncio
+                        opacity: 0
+                    }
+
                     AnchorChanges{
                         target: reloj
                         anchors.left: actividadBackgr.right
@@ -90,6 +112,11 @@ Window {
                         target: anuncioBackgr
                         opacity: 1
                     }
+                    PropertyChanges {
+                        target: pViewAnuncio
+                        opacity: 1
+                    }
+
                     AnchorChanges {
                         target: reloj
                         anchors.left: itemContainer.left
@@ -115,7 +142,7 @@ Window {
                                 duration: 400
                             }
                             PropertyAnimation {
-                                target: anuncioBackgr
+                                targets: [anuncioBackgr,pViewAnuncio]
                                 property: "opacity"
                                 duration: 400
                             }
@@ -131,7 +158,7 @@ Window {
                                 duration:400
                             }
                             PropertyAnimation {
-                                target:anuncioBackgr
+                                targets: [anuncioBackgr,pViewAnuncio]
                                 property: "opacity"
                                 duration: 400
                             }
@@ -243,5 +270,25 @@ Window {
             anchors.topMargin: 10
             opacity: 0
         }
+
+        PathView
+        {
+            id: pViewAnuncio
+            model: modeloAnuncio
+            anchors.fill: anuncioBackgr
+            delegate: DelegadoAnuncio {}
+            path: Path {
+                startX: pViewAnuncio.width/2 ; startY: pViewAnuncio.height /2;
+                PathLine {
+                    x: pViewAnuncio.width/2
+                    y: pViewAnuncio.height*4
+                }
+
+            }
+
+            pathItemCount: 3
+            opacity: 0
+        }
+
     }
 }

@@ -37,7 +37,9 @@
 #include <QWindowList>
 #include <QFile>
 #include <QFileInfo>
-
+#include <QStringList>
+#include <QStringListModel>
+#include <QDir>
 
 #include <QJsonDocument>
 #include <QJsonObject>
@@ -269,6 +271,29 @@ QAbstractItemModel *modeloDepuracion()
     return modelo;
 }
 
+/*!
+ * Crea un modelo con los paths de imagenes
+ */
+
+QAbstractItemModel *getModeloAnuncios(QString path)
+{
+    QDir directorio(path);
+    QStringList filtros;
+
+    filtros << "*.bmp" << "*.jpg" << "*.png";
+    directorio.setNameFilters(filtros);
+    directorio.setFilter(QDir::Files);
+
+    QFileInfoList archivos=directorio.entryInfoList();
+    QStringList listaImagen;
+    foreach(QFileInfo info,archivos)
+        listaImagen << info.absoluteFilePath();
+
+    QStringListModel *modeloRes=new QStringListModel(listaImagen);
+
+    return modeloRes;
+}
+
 int main(int argc, char *argv[])
 {
     QGuiApplication app(argc, argv);
@@ -281,6 +306,7 @@ int main(int argc, char *argv[])
     QQmlApplicationEngine engine;
 
     QmlModeloIntermedio *mIntermedio=0;
+    QAbstractItemModel *mAnuncios=0;
 
     //Cargar datos de configuracion
     if(configuracion.modoOperacion()==AcoPiConfiguracion::Depuracion) {
@@ -303,6 +329,8 @@ int main(int argc, char *argv[])
         engine.load(QUrl(QStringLiteral("qrc:///main.qml")));
         break;
     case AcoPiConfiguracion::Anuncios:
+        mAnuncios=getModeloAnuncios(configuracion.pathAnuncios());
+        engine.rootContext()->setContextProperty("modeloAnuncio",mAnuncios);
         engine.load(QUrl(QStringLiteral("qrc:///mainAnuncio.qml")));
         break;
     default:
