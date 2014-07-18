@@ -278,10 +278,10 @@ Window {
             anchors.fill: anuncioBackgr
             delegate: DelegadoAnuncio {}
             path: Path {
-                startX: pViewAnuncio.width/2 ; startY: pViewAnuncio.height /2;
+                startX:   pViewAnuncio.width/2 ; startY: pViewAnuncio.height /2;
                 PathLine {
-                    x: pViewAnuncio.width/2
-                    y: pViewAnuncio.height*4
+                    x: pViewAnuncio.width * 4
+                    y: (pViewAnuncio.height /2)
                 }
 
             }
