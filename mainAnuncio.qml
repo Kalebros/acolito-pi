@@ -34,6 +34,7 @@ Window {
                         pViewPrincipal.incrementCurrentIndex();
                     }
                     else {
+                        modeloAnuncio.reloadModel();
                         pViewAnuncio.currentIndex=0;
                         reloj.state="modoAnuncio";
                     }
@@ -212,7 +213,7 @@ Window {
 
         }
 
-        //Elemento ACTVIDIDAD
+        //Elemento ACTIVIDAD
 
         Rectangle
         {

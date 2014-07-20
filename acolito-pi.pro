@@ -4,7 +4,8 @@ QT += qml quick
 
 SOURCES += main.cpp \
     qmlmodelointermedio.cpp \
-    acopiconfiguracion.cpp
+    acopiconfiguracion.cpp \
+    acopianunciomodel.cpp
 
 RESOURCES += qml.qrc
 
@@ -16,4 +17,5 @@ include(deployment.pri)
 
 HEADERS += \
     qmlmodelointermedio.h \
-    acopiconfiguracion.h
+    acopiconfiguracion.h \
+    acopianunciomodel.h
