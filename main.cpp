@@ -46,6 +46,11 @@
 #include <QJsonArray>
 #include <QJsonValue>
 
+#include <QSqlDatabase>
+#include <QSqlQuery>
+#include <QSqlQueryModel>
+#include <QSqlError>
+
 #include "qmlmodelointermedio.h"
 #include "acopiconfiguracion.h"
 #include "acopianunciomodel.h"
@@ -56,7 +61,7 @@
 
 void buildConfiguracionJSON(AcoPiConfiguracion &cObject)
 {
-    QFileInfo infoConfig("config.json");
+    QFileInfo infoConfig(qApp->applicationDirPath()+"/config.json");
     if(!infoConfig.exists()) {
         qDebug() << "No existe archivo de configuracion, cargando configuracion por defecto...";
         cObject.setModoAcolito(AcoPiConfiguracion::Actividad);
@@ -76,14 +81,15 @@ void buildConfiguracionJSON(AcoPiConfiguracion &cObject)
         return;
     }
 
-    QJsonObject data=QJsonDocument::fromJson(fileConfig.readAll()).object();
+    QString fileData=QString::fromUtf8(fileConfig.readAll());
+    QJsonObject data=QJsonDocument::fromJson(fileData.toUtf8()).object();
 
     if(data.contains("debug_mode")) {
         if(data.value("debug_mode").toBool()) {
             cObject.setModoOperacion(AcoPiConfiguracion::Depuracion);
         }
         else cObject.setModoOperacion(AcoPiConfiguracion::Database);
-    } else cObject.setModoOperacion(AcoPiConfiguracion::Depuracion);
+    } else cObject.setModoOperacion(AcoPiConfiguracion::Database);
 
     if(data.value("modo").toString()=="ACTIVIDAD")
         cObject.setModoAcolito(AcoPiConfiguracion::Actividad);
@@ -293,8 +299,25 @@ int main(int argc, char *argv[])
         engine.rootContext()->setContextProperty("modeloAct",mIntermedio);
     }
     else {
-        qDebug() << "Modo de operacion aún no soportado.";
-        exit(0);
+        //Creamos el modelo contra la base de datos y lo asociamos al modelo intermedio
+        QSqlDatabase db=QSqlDatabase::addDatabase("QMYSQL");
+        db.setHostName(configuracion.databaseHost());
+        db.setDatabaseName(configuracion.databaseSchema());
+        db.setUserName(configuracion.databaseUser());
+        db.setPassword(configuracion.databasePassword());
+        db.setPort(configuracion.databasePort());
+
+        if(!db.open())
+        {
+            qDebug() << "NO SE PUDO ABRIR LA BASE DE DATOS ESPECIFICADA.";
+            qDebug() << db.lastError().text();
+            qDebug() << "USER: " << configuracion.databaseUser() << ", PASS: "<< configuracion.databasePassword();
+            exit(1);
+        }
+        QSqlQueryModel *mDatabase=new QSqlQueryModel(&app);
+        mDatabase->setQuery("SELECT nombre,tActividad as tipo, DATE_FORMAT(dia,'%W') as dia, DATE_FORMAT(horaInicio,'%k:%i') as hInicio,DATE_FORMAT(horaFin,'%k:%i') as hFin,minimoParticipantes as minParticipantes,maximoParticipantes as maxParticipantes,lugar,descripcion,requisitos FROM actividad",db);
+        mIntermedio=new QmlModeloIntermedio(mDatabase,&app);
+        engine.rootContext()->setContextProperty("modeloAct",mIntermedio);
     }
 
     engine.rootContext()->setContextProperty("item_container_margins",configuracion.itemContainerMargins());

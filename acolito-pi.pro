@@ -1,11 +1,12 @@
 TEMPLATE = app
 
-QT += qml quick
+QT += qml quick sql
 
 SOURCES += main.cpp \
     qmlmodelointermedio.cpp \
     acopiconfiguracion.cpp \
-    acopianunciomodel.cpp
+    acopianunciomodel.cpp \
+    qmlmiquerymodel.cpp
 
 RESOURCES += qml.qrc
 
@@ -18,4 +19,5 @@ include(deployment.pri)
 HEADERS += \
     qmlmodelointermedio.h \
     acopiconfiguracion.h \
-    acopianunciomodel.h
+    acopianunciomodel.h \
+    qmlmiquerymodel.h
