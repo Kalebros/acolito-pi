@@ -26,6 +26,11 @@ QmlModeloIntermedio::QmlModeloIntermedio(QAbstractItemModel *mBase, QObject *par
         QSortFilterProxyModel::setSourceModel(_modeloBase);
         generateRoles();
     }
+    _horaFija=QTime();
+    _fechaFija=QDate();
+
+    _isHoraFija=false;
+    _isFechaFija=false;
 }
 
 
@@ -69,4 +74,48 @@ void QmlModeloIntermedio::setModeloBase(QAbstractItemModel *mBase)
 bool QmlModeloIntermedio::reloadModelo()
 {
     return false;
+}
+
+bool QmlModeloIntermedio::isFechaFija() const
+{
+    return _isFechaFija;
+}
+
+bool QmlModeloIntermedio::isHoraFija() const
+{
+    return _isHoraFija;
+}
+
+QDate QmlModeloIntermedio::getFechaFija() const
+{
+    return _fechaFija;
+}
+
+QTime QmlModeloIntermedio::getHoraFija() const
+{
+    return _horaFija;
+}
+
+void QmlModeloIntermedio::setFechaFija(QDate fecha)
+{
+    _fechaFija=fecha;
+    _isFechaFija=true;
+    reloadModelo();
+}
+
+void QmlModeloIntermedio::setHoraFija(QTime hora)
+{
+    _horaFija=hora;
+    _isHoraFija=true;
+    reloadModelo();
+}
+
+void QmlModeloIntermedio::unsetFechaFija()
+{
+    _isFechaFija=false;
+}
+
+void QmlModeloIntermedio::unsetHoraFija()
+{
+    _isHoraFija=false;
 }

@@ -52,6 +52,7 @@
 #include <QSqlError>
 
 #include "qmlmodelointermedio.h"
+#include "qmlmiquerymodel.h"
 #include "acopiconfiguracion.h"
 #include "acopianunciomodel.h"
 
@@ -314,10 +315,11 @@ int main(int argc, char *argv[])
             qDebug() << "USER: " << configuracion.databaseUser() << ", PASS: "<< configuracion.databasePassword();
             exit(1);
         }
-        QSqlQueryModel *mDatabase=new QSqlQueryModel(&app);
-        mDatabase->setQuery("SELECT nombre,tActividad as tipo, DATE_FORMAT(dia,'%W') as dia, DATE_FORMAT(horaInicio,'%k:%i') as hInicio,DATE_FORMAT(horaFin,'%k:%i') as hFin,minimoParticipantes as minParticipantes,maximoParticipantes as maxParticipantes,lugar,descripcion,requisitos FROM actividad",db);
-        mIntermedio=new QmlModeloIntermedio(mDatabase,&app);
-        engine.rootContext()->setContextProperty("modeloAct",mIntermedio);
+        //Crear modelo intermedio de base de datos
+        QmlMIQueryModel *miActividad=new QmlMIQueryModel(&app);
+        miActividad->setFechaFija(QDate(2013,8,2));
+        miActividad->setHoraFija(QTime(17,0));
+        engine.rootContext()->setContextProperty("modeloAct",miActividad);
     }
 
     engine.rootContext()->setContextProperty("item_container_margins",configuracion.itemContainerMargins());

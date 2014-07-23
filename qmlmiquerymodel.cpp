@@ -18,21 +18,69 @@
 
 #include "qmlmiquerymodel.h"
 
-QmlMIQueryModel::QmlMIQueryModel(QAbstractItemModel *mBase, QObject *parent) :
-    QmlModeloIntermedio(mBase,parent)
+QmlMIQueryModel::QmlMIQueryModel(QObject *parent) :
+    QmlModeloIntermedio(0,parent)
 {
+    _internBasicQuery="SELECT nombre,tActividad as tipo, DATE_FORMAT(dia,'%W') as dia, "
+            "DATE_FORMAT(horaInicio, '%k:%i') as hInicio, DATE_FORMAT(horaFin, '%k:%i') as hFin, "
+            "minimoParticipantes as minParticipantes,maximoParticipantes as maxParticipantes,lugar,"
+            "descripcion,requisitos FROM actividad WHERE dia='%1' AND "
+            "horaInicio BETWEEN '%2' AND '%3'";
+
+    QSqlQueryModel *mQuery=new QSqlQueryModel(this);
+
+    //Generar query
+    QDate fecha;
+    QTime cTime;
+    QTime hAnterior,hPosterior;
+
+    if(!_isFechaFija)
+        fecha=QDate::currentDate();
+    else fecha=_fechaFija;
+
+    if(!_isHoraFija)
+        cTime=QTime::currentTime();
+    else cTime=_horaFija;
+
+    hPosterior=cTime.addSecs(30*60);
+    hAnterior=cTime.addSecs(-(30*60));
+
+    QString query=_internBasicQuery.arg(fecha.toString("yyyy-MM-dd")).arg(hAnterior.toString("hh:mm:00")).arg(hPosterior.toString("hh:mm:00"));
+    mQuery->setQuery(query,QSqlDatabase::database());
+    _modeloBase=mQuery;
+
+    qDebug() << query;
+    QSortFilterProxyModel::setSourceModel(_modeloBase);
+    generateRoles();
 }
 
 bool QmlMIQueryModel::reloadModelo()
 {
     beginResetModel();
-    QSqlQueryModel *mQuery=qobject_cast<QSqlQueryModel*>(sourceModel());
+    QSqlQueryModel *mQuery=qobject_cast<QSqlQueryModel*>(_modeloBase);
+    //Generar query
+    QDate fecha;
+    QTime cTime;
+    QTime hAnterior,hPosterior;
 
-    mQuery->setQuery(mQuery->query().lastQuery(),QSqlDatabase::database());
-    setSourceModel(mQuery);
+    if(!_isFechaFija)
+        fecha=QDate::currentDate();
+    else fecha=_fechaFija;
+
+    if(!_isHoraFija)
+        cTime=QTime::currentTime();
+    else cTime=_horaFija;
+
+    hPosterior=cTime.addSecs(30*60);
+    hAnterior=cTime.addSecs(-(30*60));
+
+    QString query=_internBasicQuery.arg(fecha.toString("yyyy-MM-dd")).arg(hAnterior.toString("hh:mm:00")).arg(hPosterior.toString("hh:mm:00"));
+    mQuery->setQuery(query,QSqlDatabase::database());
+
+    QSortFilterProxyModel::setSourceModel(_modeloBase);
     endResetModel();
 
-    if(mQuery->rowCount())
+    if(_modeloBase->rowCount())
         return true;
-    else return false;
+    return false;
 }
