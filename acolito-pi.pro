@@ -21,3 +21,9 @@ HEADERS += \
     acopiconfiguracion.h \
     acopianunciomodel.h \
     qmlmiquerymodel.h
+
+win32 {
+    DEFINES += WINDOWS_PLATFORM
+}
+unix {
+}

@@ -82,8 +82,9 @@ void buildConfiguracionJSON(AcoPiConfiguracion &cObject)
         return;
     }
 
+    QJsonObject data;
     QString fileData=QString::fromUtf8(fileConfig.readAll());
-    QJsonObject data=QJsonDocument::fromJson(fileData.toUtf8()).object();
+    data=QJsonDocument::fromJson(fileData.toUtf8()).object();
 
     if(data.contains("debug_mode")) {
         if(data.value("debug_mode").toBool()) {
