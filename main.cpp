@@ -55,7 +55,7 @@
 #include "qmlmiquerymodel.h"
 #include "acopiconfiguracion.h"
 #include "acopianunciomodel.h"
-
+#include "acopiconfreader.h"
 /*!
  * Crea la configuracion a partir de un archivo JSON
  */
@@ -286,8 +286,16 @@ int main(int argc, char *argv[])
 
     //Cargar configuracion
     AcoPiConfiguracion configuracion;
+    AcoPiConfReader readerConf;
 
-    buildConfiguracionJSON(configuracion);
+    //Cambiar el modo según la plataforma
+#ifdef WINDOWS_PLATFORM
+    readerConf.readJSONConfiguracion(configuracion,AcoPiConfReader::Windows);
+#elif LINUX_PLATFORM
+    readerConf.readJSONConfiguracion(configuracion,AcoPiConfReader::Raspberry);
+#endif
+
+//    buildConfiguracionJSON(configuracion);
 
     QQmlApplicationEngine engine;
 

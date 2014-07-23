@@ -6,7 +6,8 @@ SOURCES += main.cpp \
     qmlmodelointermedio.cpp \
     acopiconfiguracion.cpp \
     acopianunciomodel.cpp \
-    qmlmiquerymodel.cpp
+    qmlmiquerymodel.cpp \
+    acopiconfreader.cpp
 
 RESOURCES += qml.qrc
 
@@ -20,10 +21,13 @@ HEADERS += \
     qmlmodelointermedio.h \
     acopiconfiguracion.h \
     acopianunciomodel.h \
-    qmlmiquerymodel.h
+    qmlmiquerymodel.h \
+    acopiconfreader.h
 
 win32 {
     DEFINES += WINDOWS_PLATFORM
 }
+
 unix {
+    DEFINES += LINUX_PLATFORM
 }
