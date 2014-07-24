@@ -25,9 +25,11 @@ HEADERS += \
     acopiconfreader.h
 
 win32 {
+    message("Plataforma Windows, usando metodo JSON para Windows")
     DEFINES += WINDOWS_PLATFORM
 }
 
 unix {
+    message("Plataforma UNIX, usando metodo JSON para UNIX")
     DEFINES += LINUX_PLATFORM
 }
