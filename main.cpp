@@ -56,61 +56,92 @@
 #include "acopiconfiguracion.h"
 #include "acopianunciomodel.h"
 #include "acopiconfreader.h"
-/*!
- * Crea la configuracion a partir de un archivo JSON
- */
-
-void buildConfiguracionJSON(AcoPiConfiguracion &cObject)
-{
-    QFileInfo infoConfig(qApp->applicationDirPath()+"/config.json");
-    if(!infoConfig.exists()) {
-        qDebug() << "No existe archivo de configuracion, cargando configuracion por defecto...";
-        cObject.setModoAcolito(AcoPiConfiguracion::Actividad);
-        cObject.setModoOperacion(AcoPiConfiguracion::Depuracion);
-        cObject.setItemContainerMargins(0);
-        qDebug() << "Configuracion READY!";
-        return;
-    }
-
-    QFile fileConfig(infoConfig.absoluteFilePath());
-    if(!fileConfig.open(QFile::Text | QFile::ReadOnly)) {
-        qDebug() << "No se pudo abrir el archivo, cargando configuracion por defecto...";
-        cObject.setModoAcolito(AcoPiConfiguracion::Actividad);
-        cObject.setModoOperacion(AcoPiConfiguracion::Depuracion);
-        cObject.setItemContainerMargins(0);
-        qDebug() << "Configuracion READY!";
-        return;
-    }
-
-    QJsonObject data;
-    QString fileData=QString::fromUtf8(fileConfig.readAll());
-    data=QJsonDocument::fromJson(fileData.toUtf8()).object();
-
-    if(data.contains("debug_mode")) {
-        if(data.value("debug_mode").toBool()) {
-            cObject.setModoOperacion(AcoPiConfiguracion::Depuracion);
-        }
-        else cObject.setModoOperacion(AcoPiConfiguracion::Database);
-    } else cObject.setModoOperacion(AcoPiConfiguracion::Database);
-
-    if(data.value("modo").toString()=="ACTIVIDAD")
-        cObject.setModoAcolito(AcoPiConfiguracion::Actividad);
-    if(data.value("modo").toString()=="ANUNCIOS")
-        cObject.setModoAcolito(AcoPiConfiguracion::Anuncios);
-
-    cObject.setDatabaseHost(data.value("database").toObject().value("host").toString());
-    cObject.setDatabaseUser(data.value("database").toObject().value("user").toString());
-    cObject.setDatabasePass(data.value("database").toObject().value("password").toString());
-    cObject.setDatabasePort(data.value("database").toObject().value("port").toDouble());
-    cObject.setDatabaseSchema(data.value("database").toObject().value("schema").toString());
-    cObject.setPathAnuncios(data.value("path_modo_anuncio").toString());
-    cObject.setItemContainerMargins(data.value("item_container_margins").toDouble());
-    qDebug() << "Configuracion READY!";
-}
 
 /*!
  * Crea el modelo de depuracion
  */
+
+QAbstractItemModel *modeloDepuracion();
+
+////////////////////////////////////////////////////////////////
+/// MAIN
+////////////////////////////////////////////////////////////////
+
+int main(int argc, char *argv[])
+{
+    QGuiApplication app(argc, argv);
+
+    //Cargar configuracion
+    AcoPiConfiguracion configuracion;
+    AcoPiConfReader readerConf;
+
+    //Cambiar el modo según la plataforma
+#ifdef WINDOWS_PLATFORM
+    readerConf.readJSONConfiguracion(configuracion,AcoPiConfReader::Windows);
+#elif LINUX_PLATFORM
+    readerConf.readJSONConfiguracion(configuracion,AcoPiConfReader::Raspberry);
+#endif
+
+//    buildConfiguracionJSON(configuracion);
+
+    QQmlApplicationEngine engine;
+
+    QmlModeloIntermedio *mIntermedio=0;
+    AcoPiAnuncioModel *mAnuncios=0;
+
+    //Cargar datos de configuracion
+    if(configuracion.modoOperacion()==AcoPiConfiguracion::Depuracion) {
+        //Preparar modelo intermedio
+        mIntermedio=new QmlModeloIntermedio(modeloDepuracion(),&app);
+        engine.rootContext()->setContextProperty("modeloAct",mIntermedio);
+    }
+    else {
+        //Creamos el modelo contra la base de datos y lo asociamos al modelo intermedio
+        QSqlDatabase db=QSqlDatabase::addDatabase("QMYSQL");
+        db.setHostName(configuracion.databaseHost());
+        db.setDatabaseName(configuracion.databaseSchema());
+        db.setUserName(configuracion.databaseUser());
+        db.setPassword(configuracion.databasePassword());
+        db.setPort(configuracion.databasePort());
+
+        if(!db.open())
+        {
+            qDebug() << "NO SE PUDO ABRIR LA BASE DE DATOS ESPECIFICADA.";
+            qDebug() << db.lastError().text();
+            qDebug() << "USER: " << configuracion.databaseUser() << ", PASS: "<< configuracion.databasePassword();
+            exit(1);
+        }
+        //Crear modelo intermedio de base de datos
+        QmlMIQueryModel *miActividad=new QmlMIQueryModel(&app);
+        miActividad->setFechaFija(QDate(2013,8,2));
+        miActividad->setHoraFija(QTime(17,0));
+        engine.rootContext()->setContextProperty("modeloAct",miActividad);
+    }
+
+    engine.rootContext()->setContextProperty("item_container_margins",configuracion.itemContainerMargins());
+
+    AcoPiConfiguracion::ModoAcolito mode=configuracion.modoAcolito();
+
+    switch(mode)
+    {
+    case AcoPiConfiguracion::Actividad:
+        engine.load(QUrl(QStringLiteral("qrc:///main.qml")));
+        break;
+    case AcoPiConfiguracion::Anuncios:
+        mAnuncios=new AcoPiAnuncioModel(&app,configuracion.pathAnuncios());
+        engine.rootContext()->setContextProperty("modeloAnuncio",mAnuncios);
+        engine.load(QUrl(QStringLiteral("qrc:///mainAnuncio.qml")));
+        break;
+    default:
+        qDebug() << "Modo no soportado.";
+        exit(0);
+        break;
+    }
+
+    //Es posible que necesite este hack para que funcione en la raspberry
+    app.allWindows().first()->showFullScreen();
+    return app.exec();
+}
 
 QAbstractItemModel *modeloDepuracion()
 {
@@ -278,80 +309,4 @@ QAbstractItemModel *modeloDepuracion()
     modelo->appendRow(fila);
 
     return modelo;
-}
-
-int main(int argc, char *argv[])
-{
-    QGuiApplication app(argc, argv);
-
-    //Cargar configuracion
-    AcoPiConfiguracion configuracion;
-    AcoPiConfReader readerConf;
-
-    //Cambiar el modo según la plataforma
-#ifdef WINDOWS_PLATFORM
-    readerConf.readJSONConfiguracion(configuracion,AcoPiConfReader::Windows);
-#elif LINUX_PLATFORM
-    readerConf.readJSONConfiguracion(configuracion,AcoPiConfReader::Raspberry);
-#endif
-
-//    buildConfiguracionJSON(configuracion);
-
-    QQmlApplicationEngine engine;
-
-    QmlModeloIntermedio *mIntermedio=0;
-    AcoPiAnuncioModel *mAnuncios=0;
-
-    //Cargar datos de configuracion
-    if(configuracion.modoOperacion()==AcoPiConfiguracion::Depuracion) {
-        //Preparar modelo intermedio
-        mIntermedio=new QmlModeloIntermedio(modeloDepuracion(),&app);
-        engine.rootContext()->setContextProperty("modeloAct",mIntermedio);
-    }
-    else {
-        //Creamos el modelo contra la base de datos y lo asociamos al modelo intermedio
-        QSqlDatabase db=QSqlDatabase::addDatabase("QMYSQL");
-        db.setHostName(configuracion.databaseHost());
-        db.setDatabaseName(configuracion.databaseSchema());
-        db.setUserName(configuracion.databaseUser());
-        db.setPassword(configuracion.databasePassword());
-        db.setPort(configuracion.databasePort());
-
-        if(!db.open())
-        {
-            qDebug() << "NO SE PUDO ABRIR LA BASE DE DATOS ESPECIFICADA.";
-            qDebug() << db.lastError().text();
-            qDebug() << "USER: " << configuracion.databaseUser() << ", PASS: "<< configuracion.databasePassword();
-            exit(1);
-        }
-        //Crear modelo intermedio de base de datos
-        QmlMIQueryModel *miActividad=new QmlMIQueryModel(&app);
-        miActividad->setFechaFija(QDate(2013,8,2));
-        miActividad->setHoraFija(QTime(17,0));
-        engine.rootContext()->setContextProperty("modeloAct",miActividad);
-    }
-
-    engine.rootContext()->setContextProperty("item_container_margins",configuracion.itemContainerMargins());
-
-    AcoPiConfiguracion::ModoAcolito mode=configuracion.modoAcolito();
-
-    switch(mode)
-    {
-    case AcoPiConfiguracion::Actividad:
-        engine.load(QUrl(QStringLiteral("qrc:///main.qml")));
-        break;
-    case AcoPiConfiguracion::Anuncios:
-        mAnuncios=new AcoPiAnuncioModel(&app,configuracion.pathAnuncios());
-        engine.rootContext()->setContextProperty("modeloAnuncio",mAnuncios);
-        engine.load(QUrl(QStringLiteral("qrc:///mainAnuncio.qml")));
-        break;
-    default:
-        qDebug() << "Modo no soportado.";
-        exit(0);
-        break;
-    }
-
-    //Es posible que necesite este hack para que funcione en la raspberry
-    app.allWindows().first()->showFullScreen();
-    return app.exec();
 }
