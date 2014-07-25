@@ -31,6 +31,7 @@ QmlModeloIntermedio::QmlModeloIntermedio(QAbstractItemModel *mBase, QObject *par
 
     _isHoraFija=false;
     _isFechaFija=false;
+    _clockDrift=0;
 }
 
 
@@ -100,14 +101,12 @@ void QmlModeloIntermedio::setFechaFija(QDate fecha)
 {
     _fechaFija=fecha;
     _isFechaFija=true;
-    reloadModelo();
 }
 
 void QmlModeloIntermedio::setHoraFija(QTime hora)
 {
     _horaFija=hora;
     _isHoraFija=true;
-    reloadModelo();
 }
 
 void QmlModeloIntermedio::unsetFechaFija()

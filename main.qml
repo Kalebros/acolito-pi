@@ -25,10 +25,19 @@ Window {
         }
 
         Timer {
-            interval: 1000; running: true; repeat: true;
+            interval: 5000; running: true; repeat: true;
             onTriggered: {
-                pViewAct.incrementCurrentIndex();
-                pViewPrincipal.incrementCurrentIndex();
+                console.log("currentIndex: ",pViewAct.currentIndex, ", count: ",pViewAct.count);
+                if(pViewAct.currentIndex===pViewAct.count-1)
+                {
+                    modeloAct.reloadModelo();
+                    pViewAct.currentIndex=0;
+                    pViewPrincipal.currentIndex=0;
+                }
+                else {
+                    pViewAct.incrementCurrentIndex();
+                    pViewPrincipal.incrementCurrentIndex();
+                }
             }
         }
 

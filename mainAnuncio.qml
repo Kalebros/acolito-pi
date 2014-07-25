@@ -26,7 +26,8 @@ Window {
         }
 
         Timer {
-            interval: 2000; running: true; repeat: true;
+            id: indexTimer
+            interval: 5000; running: true; repeat: true;
             onTriggered: {
                 if(reloj.state=="modoActividad") {
                     if(pViewAct.currentIndex<pViewPrincipal.count-1) {
@@ -36,6 +37,7 @@ Window {
                     else {
                         modeloAnuncio.reloadModel();
                         pViewAnuncio.currentIndex=0;
+                        stop();
                         reloj.state="modoAnuncio";
                     }
                 }
@@ -44,8 +46,10 @@ Window {
                         pViewAnuncio.incrementCurrentIndex();
                     }
                     else {
+                        modeloAct.reloadModelo();
                         pViewAct.currentIndex=0;
                         pViewPrincipal.currentIndex=0;
+                        stop();
                         reloj.state="modoActividad";
                     }
                 }
@@ -149,6 +153,7 @@ Window {
                             }
                         }
                     }
+                    ScriptAction { script: indexTimer.start();}
                 },
                 Transition {
                     from: "modoAnuncio"
@@ -170,6 +175,7 @@ Window {
                             duration: 500
                         }
                     }
+                    ScriptAction { script: indexTimer.start();}
                 }
 
             ]

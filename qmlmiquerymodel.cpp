@@ -67,8 +67,10 @@ bool QmlMIQueryModel::reloadModelo()
         fecha=QDate::currentDate();
     else fecha=_fechaFija;
 
-    if(!_isHoraFija)
+    if(!_isHoraFija) {
         cTime=QTime::currentTime();
+        cTime=cTime.addSecs(_clockDrift);
+    }
     else cTime=_horaFija;
 
     hPosterior=cTime.addSecs(30*60);

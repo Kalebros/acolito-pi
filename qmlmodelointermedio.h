@@ -86,6 +86,24 @@ public:
     void setHoraFija(QTime hora);
 
     /*!
+      Establece la diferencia de hora a aplicar
+      @param drift  Diferencia en segundos a aplicar
+      @note Modifica el objeto
+      @note No se aplica el clock drift cuando se ha establecido
+      una hora fija.
+      */
+
+    void setClockDrift(double drift);
+
+    /*!
+      Devuelve la diferencia de hora a aplicar
+      @return Diferencia en segundos a aplicar
+      @note No modifica el objeto
+      */
+
+    double clockDrift() const;
+
+    /*!
       Devuelve la hora fija del modelo
       @return QTime, hora fija del modelo
       @note No modifica el objeto
@@ -118,6 +136,7 @@ protected:
     QTime _horaFija;
     bool _isFechaFija;
     bool _isHoraFija;
+    double _clockDrift;
     QHash<int, QByteArray> _roleNames;
 
     /*!
