@@ -96,6 +96,7 @@ void AcoPiConfReader::readJSONConfiguracion(AcoPiConfiguracion &c, Plataforma mo
     c.setDatabaseSchema(data.value("database").toObject().value("schema").toString());
     c.setPathAnuncios(data.value("path_modo_anuncio").toString());
     c.setItemContainerMargins(data.value("item_container_margins").toDouble());
+    c.setIndexTimerInterval(data.value("indexTimer_interval").toDouble());
     qDebug() << "Configuracion READY!";
 
 }

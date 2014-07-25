@@ -114,12 +114,13 @@ int main(int argc, char *argv[])
         //Crear modelo intermedio de base de datos
         QmlMIQueryModel *miActividad=new QmlMIQueryModel(&app);
         miActividad->setFechaFija(QDate(2013,8,2));
-//        miActividad->setHoraFija(QTime(17,0));
+//        miActividad->setHoraFija(QTime(0,0));
         miActividad->reloadModelo();
         engine.rootContext()->setContextProperty("modeloAct",miActividad);
     }
 
     engine.rootContext()->setContextProperty("item_container_margins",configuracion.itemContainerMargins());
+    engine.rootContext()->setContextProperty("indexTimer_interval",configuracion.indexTimerInterval());
 
     AcoPiConfiguracion::ModoAcolito mode=configuracion.modoAcolito();
 

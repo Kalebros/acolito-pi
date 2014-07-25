@@ -27,7 +27,7 @@ Window {
 
         Timer {
             id: indexTimer
-            interval: 5000; running: true; repeat: true;
+            interval: indexTimer_interval; running: true; repeat: true;
             onTriggered: {
                 if(reloj.state=="modoActividad") {
                     if(pViewAct.currentIndex<pViewPrincipal.count-1) {

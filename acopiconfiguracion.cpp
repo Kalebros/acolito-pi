@@ -75,3 +75,8 @@ void AcoPiConfiguracion::setItemContainerMargins(double d)
     _margins=d;
 }
 
+void AcoPiConfiguracion::setIndexTimerInterval(double i)
+{
+    _indexTimer_interval=i;
+}
+

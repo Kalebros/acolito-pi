@@ -49,6 +49,9 @@ public:
     double itemContainerMargins() const
     { return _margins; }
 
+    double indexTimerInterval() const
+    { return _indexTimer_interval; }
+
     void setModoOperacion(ModoAcceso m);
     void setModoAcolito(ModoAcolito m);
     void setDatabaseUser(QString user);
@@ -57,6 +60,7 @@ public:
     void setDatabaseSchema(QString schema);
     void setDatabasePort(int port);
     void setItemContainerMargins(double d);
+    void setIndexTimerInterval(double i);
 
     void setPathAnuncios(QString p);
 
@@ -71,6 +75,7 @@ private:
     QString _dbSchema;
     int _dbPort;
     double _margins;
+    double _indexTimer_interval;
 
     QString _pathAnuncios;
 };
