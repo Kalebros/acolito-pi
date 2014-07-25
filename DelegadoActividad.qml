@@ -281,9 +281,8 @@ Item
 
             height: parent.height / 3
             font.family: "Roboto"
-            font.pixelSize: 100
+            font.pixelSize: fontSize_descripcion
             anchors.margins: 10
-            fontSizeMode: Text.VerticalFit
             horizontalAlignment: Text.horizontalCenter
             color: "#424242"
             text: descripcion
@@ -321,9 +320,8 @@ Item
             anchors.bottom: parent.bottom
 
             font.family: "Roboto"
-            font.pixelSize: 100
+            font.pixelSize: fontSize_requisitos
             anchors.margins: 10
-            fontSizeMode: Text.VerticalFit
             horizontalAlignment: Text.horizontalCenter
             color: "#424242"
             text: requisitos

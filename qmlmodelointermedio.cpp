@@ -118,3 +118,13 @@ void QmlModeloIntermedio::unsetHoraFija()
 {
     _isHoraFija=false;
 }
+
+void QmlModeloIntermedio::setClockDrift(double drift)
+{
+    _clockDrift=drift;
+}
+
+double QmlModeloIntermedio::clockDrift() const
+{
+    return _clockDrift;
+}

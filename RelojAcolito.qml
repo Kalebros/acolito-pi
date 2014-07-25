@@ -7,7 +7,6 @@ Item {
     property string colorFondo : "darkgrey"
     property string colorFuente : "white"
     property string colorBorde : "white"
-    property int borderRadius : 0
 
     Timer {
         interval: 500; running: true; repeat: true;

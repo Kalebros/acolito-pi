@@ -80,3 +80,13 @@ void AcoPiConfiguracion::setIndexTimerInterval(double i)
     _indexTimer_interval=i;
 }
 
+void AcoPiConfiguracion::setDescripcionFontSize(double d)
+{
+    _descripcionFontSize=d;
+}
+
+void AcoPiConfiguracion::setRequisitosFontSize(double d)
+{
+    _requisitosFontSize=d;
+}
+

@@ -52,6 +52,12 @@ public:
     double indexTimerInterval() const
     { return _indexTimer_interval; }
 
+    double descripcionFontSize() const
+    { return _descripcionFontSize; }
+
+    double requisitosFontSize() const
+    { return _requisitosFontSize; }
+
     void setModoOperacion(ModoAcceso m);
     void setModoAcolito(ModoAcolito m);
     void setDatabaseUser(QString user);
@@ -61,6 +67,8 @@ public:
     void setDatabasePort(int port);
     void setItemContainerMargins(double d);
     void setIndexTimerInterval(double i);
+    void setDescripcionFontSize(double d);
+    void setRequisitosFontSize(double d);
 
     void setPathAnuncios(QString p);
 
@@ -76,6 +84,8 @@ private:
     int _dbPort;
     double _margins;
     double _indexTimer_interval;
+    double _descripcionFontSize;
+    double _requisitosFontSize;
 
     QString _pathAnuncios;
 };
