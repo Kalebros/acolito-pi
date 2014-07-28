@@ -90,3 +90,8 @@ void AcoPiConfiguracion::setRequisitosFontSize(double d)
     _requisitosFontSize=d;
 }
 
+void AcoPiConfiguracion::setClockDriftHour(double d)
+{
+    _clockDrift_hour=d;
+}
+

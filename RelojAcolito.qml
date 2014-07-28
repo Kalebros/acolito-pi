@@ -8,10 +8,17 @@ Item {
     property string colorFuente : "white"
     property string colorBorde : "white"
 
+    function timeModByDrift()
+    {
+        var fecha=new Date();
+        fecha.setUTCHours(fecha.getUTCHours()+clockDrift_hour);
+        return fecha;
+    }
+
     Timer {
         interval: 500; running: true; repeat: true;
         onTriggered: {
-            horaReloj.text = Qt.formatTime(new Date(),"HH:mm");
+            horaReloj.text = Qt.formatTime(timeModByDrift(),"HH:mm");
         }
     }
 
@@ -24,7 +31,7 @@ Item {
         Text
         {
             id: horaReloj
-            text: qsTr(Qt.formatTime(new Date(),"HH:mm"))
+            text: qsTr(Qt.formatTime(timeModByDrift(),"HH:mm"))
             anchors.centerIn: backgroundReloj
             anchors.fill: backgroundReloj
             horizontalAlignment: Text.Center

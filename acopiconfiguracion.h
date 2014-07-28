@@ -58,6 +58,9 @@ public:
     double requisitosFontSize() const
     { return _requisitosFontSize; }
 
+    double clockDriftHour() const
+    { return _clockDrift_hour; }
+
     void setModoOperacion(ModoAcceso m);
     void setModoAcolito(ModoAcolito m);
     void setDatabaseUser(QString user);
@@ -69,6 +72,7 @@ public:
     void setIndexTimerInterval(double i);
     void setDescripcionFontSize(double d);
     void setRequisitosFontSize(double d);
+    void setClockDriftHour(double d);
 
     void setPathAnuncios(QString p);
 
@@ -86,6 +90,7 @@ private:
     double _indexTimer_interval;
     double _descripcionFontSize;
     double _requisitosFontSize;
+    double _clockDrift_hour;
 
     QString _pathAnuncios;
 };

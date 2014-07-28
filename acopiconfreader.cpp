@@ -99,6 +99,7 @@ void AcoPiConfReader::readJSONConfiguracion(AcoPiConfiguracion &c, Plataforma mo
     c.setIndexTimerInterval(data.value("indexTimer_interval").toDouble());
     c.setDescripcionFontSize(data.value("fontSize_descripcion").toDouble());
     c.setRequisitosFontSize(data.value("fontSize_requisitos").toDouble());
+    c.setClockDriftHour(data.value("clockDrift_hour").toDouble());
     qDebug() << "Configuracion READY!";
 
 }

@@ -115,7 +115,7 @@ int main(int argc, char *argv[])
         QmlMIQueryModel *miActividad=new QmlMIQueryModel(&app);
         miActividad->setFechaFija(QDate(2013,8,2));
 //        miActividad->setHoraFija(QTime(0,0));
-        miActividad->setClockDrift(60*60*2);
+        miActividad->setClockDrift(60*60*configuracion.clockDriftHour());
         miActividad->reloadModelo();
         engine.rootContext()->setContextProperty("modeloAct",miActividad);
     }
@@ -124,6 +124,7 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty("indexTimer_interval",configuracion.indexTimerInterval());
     engine.rootContext()->setContextProperty("fontSize_descripcion",configuracion.descripcionFontSize());
     engine.rootContext()->setContextProperty("fontSize_requisitos",configuracion.requisitosFontSize());
+    engine.rootContext()->setContextProperty("clockDrift_hour",configuracion.clockDriftHour());
 
     AcoPiConfiguracion::ModoAcolito mode=configuracion.modoAcolito();
 
