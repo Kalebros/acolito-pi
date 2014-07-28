@@ -8,6 +8,27 @@ Item
     height: parent.height
     property int heightCuadro: (height / 4) - 25
 
+    function nombreDiaCorregido(diaName)
+    {
+        var respuesta="noName";
+        if(diaName==="Monday")
+            respuesta="Lunes";
+        if(diaName==="Tuesday")
+            respuesta="Martes";
+        if(diaName==="Wednesday")
+            respuesta="Miércoles";
+        if(diaName==="Thursday")
+            respuesta="Jueves";
+        if(diaName==="Friday")
+            respuesta="Viernes";
+        if(diaName==="Saturday")
+            respuesta="Sábado";
+        if(diaName==="Sunday")
+            respuesta="Domingo";
+
+        return respuesta;
+    }
+
     Item
     {
         id: dataColumn
@@ -84,7 +105,7 @@ Item
                 fontSizeMode: Text.HorizontalFit
                 horizontalAlignment: Text.horizontalCenter
                 color: "white"
-                text: dia
+                text: nombreDiaCorregido(dia)
                 wrapMode: Text.Wrap
                 font.weight: Font.Bold
                 antialiasing: true
