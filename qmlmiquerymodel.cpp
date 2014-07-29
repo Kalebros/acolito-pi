@@ -42,7 +42,7 @@ QmlMIQueryModel::QmlMIQueryModel(QObject *parent, QDate f, QTime h) :
     else cTime=_horaFija;
 
     //Establecer hora para el siguiente cambio
-    _nextChange=QTime(cTime.hour()+1,0);
+    _nextChange=QTime(cTime.hour(),0).addSecs(60*60);
 
     _hPosterior=QTime(cTime.hour(),0).addSecs(60*60);
     _hAnterior=QTime(cTime.hour(),0).addSecs(-(60*60));
@@ -75,15 +75,22 @@ bool QmlMIQueryModel::reloadModelo()
     else cTime=_horaFija;
 
     //Comprobamos si es necesario hacer el cambio de hora
+    //Para depurar, obligamos a realizar el cambio siempre
+
+//    _nextChange=_nextChange.addSecs(60*60);
+//    _hPosterior=QTime(_nextChange).addSecs(60*60);
+//    _hAnterior=QTime(_nextChange).addSecs(-(60*60));
+
     if(cTime.msecsTo(_nextChange)<=0) {
         _nextChange=_nextChange.addSecs(60*60);
-        _hPosterior=QTime(_nextChange).addSecs(60*60);
-        _hAnterior=QTime(_nextChange).addSecs(-(60*60));
+        _hPosterior=QTime(cTime.hour(),0).addSecs(60*60);
+        _hAnterior=QTime(cTime.hour(),0).addSecs(-(60*60));
     }
 
     QString query=_internBasicQuery.arg(fecha.toString("yyyy-MM-dd")).arg(_hAnterior.toString("hh:mm:00")).arg(_hPosterior.toString("hh:mm:00"));
     mQuery->setQuery(query,QSqlDatabase::database());
 
+    qDebug() << _nextChange << _hPosterior << _hAnterior;
     qDebug() << query;
     QSortFilterProxyModel::setSourceModel(_modeloBase);
     endResetModel();
