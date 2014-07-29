@@ -18,8 +18,8 @@
 
 #include "qmlmiquerymodel.h"
 
-QmlMIQueryModel::QmlMIQueryModel(QObject *parent) :
-    QmlModeloIntermedio(0,parent)
+QmlMIQueryModel::QmlMIQueryModel(QObject *parent, QDate f, QTime h) :
+    QmlModeloIntermedio(0,f,h,parent)
 {
     _internBasicQuery="SELECT nombre,tActividad as tipo, DATE_FORMAT(dia,'%W') as dia, "
             "DATE_FORMAT(horaInicio, '%k:%i') as hInicio, DATE_FORMAT(horaFin, '%k:%i') as hFin, "
@@ -32,7 +32,6 @@ QmlMIQueryModel::QmlMIQueryModel(QObject *parent) :
     //Generar query
     QDate fecha;
     QTime cTime;
-    QTime hAnterior,hPosterior;
 
     if(!_isFechaFija)
         fecha=QDate::currentDate();
@@ -42,14 +41,17 @@ QmlMIQueryModel::QmlMIQueryModel(QObject *parent) :
         cTime=QTime::currentTime();
     else cTime=_horaFija;
 
-    hPosterior=cTime.addSecs(60*60);
-    hAnterior=cTime.addSecs(-(60*60));
+    //Establecer hora para el siguiente cambio
+    _nextChange=QTime(cTime.hour()+1,0);
 
-    QString query=_internBasicQuery.arg(fecha.toString("yyyy-MM-dd")).arg(hAnterior.toString("hh:mm:00")).arg(hPosterior.toString("hh:mm:00"));
+    _hPosterior=QTime(cTime.hour(),0).addSecs(60*60);
+    _hAnterior=QTime(cTime.hour(),0).addSecs(-(60*60));
+
+
+    QString query=_internBasicQuery.arg(fecha.toString("yyyy-MM-dd")).arg(_hAnterior.toString("hh:mm:00")).arg(_hPosterior.toString("hh:mm:00"));
     mQuery->setQuery(query,QSqlDatabase::database());
     _modeloBase=mQuery;
 
-    qDebug() << query;
     QSortFilterProxyModel::setSourceModel(_modeloBase);
     generateRoles();
 }
@@ -61,7 +63,6 @@ bool QmlMIQueryModel::reloadModelo()
     //Generar query
     QDate fecha;
     QTime cTime;
-    QTime hAnterior,hPosterior;
 
     if(!_isFechaFija)
         fecha=QDate::currentDate();
@@ -73,12 +74,17 @@ bool QmlMIQueryModel::reloadModelo()
     }
     else cTime=_horaFija;
 
-    hPosterior=cTime.addSecs(60*60);
-    hAnterior=cTime.addSecs(-(60*60));
+    //Comprobamos si es necesario hacer el cambio de hora
+    if(cTime.msecsTo(_nextChange)<=0) {
+        _nextChange=_nextChange.addSecs(60*60);
+        _hPosterior=QTime(_nextChange).addSecs(60*60);
+        _hAnterior=QTime(_nextChange).addSecs(-(60*60));
+    }
 
-    QString query=_internBasicQuery.arg(fecha.toString("yyyy-MM-dd")).arg(hAnterior.toString("hh:mm:00")).arg(hPosterior.toString("hh:mm:00"));
+    QString query=_internBasicQuery.arg(fecha.toString("yyyy-MM-dd")).arg(_hAnterior.toString("hh:mm:00")).arg(_hPosterior.toString("hh:mm:00"));
     mQuery->setQuery(query,QSqlDatabase::database());
 
+    qDebug() << query;
     QSortFilterProxyModel::setSourceModel(_modeloBase);
     endResetModel();
 

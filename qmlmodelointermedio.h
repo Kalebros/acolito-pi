@@ -8,6 +8,7 @@
 #include <QDate>
 #include <QTime>
 #include <QDateTime>
+#include <QDebug>
 
 /*!
  * \brief Clase QmlModeloIntermedio
@@ -20,7 +21,7 @@ class QmlModeloIntermedio : public QSortFilterProxyModel
 {
     Q_OBJECT
 public:
-    explicit QmlModeloIntermedio(QAbstractItemModel *mBase=0,QObject *parent = 0);
+    explicit QmlModeloIntermedio(QAbstractItemModel *mBase=0,QDate fFija=QDate(),QTime hFija=QTime(),QObject *parent = 0);
 
     Q_INVOKABLE QVariant data(const QModelIndex &index, int role) const;
 

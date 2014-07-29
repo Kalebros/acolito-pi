@@ -18,7 +18,7 @@
 
 #include "qmlmodelointermedio.h"
 
-QmlModeloIntermedio::QmlModeloIntermedio(QAbstractItemModel *mBase, QObject *parent) :
+QmlModeloIntermedio::QmlModeloIntermedio(QAbstractItemModel *mBase,QDate fFija,QTime hFija, QObject *parent) :
     QSortFilterProxyModel(parent),
     _modeloBase(mBase)
 {
@@ -26,11 +26,11 @@ QmlModeloIntermedio::QmlModeloIntermedio(QAbstractItemModel *mBase, QObject *par
         QSortFilterProxyModel::setSourceModel(_modeloBase);
         generateRoles();
     }
-    _horaFija=QTime();
-    _fechaFija=QDate();
+    _horaFija=hFija;
+    _fechaFija=fFija;
 
-    _isHoraFija=false;
-    _isFechaFija=false;
+    _isHoraFija=!_horaFija.isNull();
+    _isFechaFija=!_fechaFija.isNull();
     _clockDrift=0;
 }
 
@@ -106,6 +106,7 @@ void QmlModeloIntermedio::setFechaFija(QDate fecha)
 void QmlModeloIntermedio::setHoraFija(QTime hora)
 {
     _horaFija=hora;
+    qDebug() << _horaFija;
     _isHoraFija=true;
 }
 

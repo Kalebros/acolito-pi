@@ -92,7 +92,7 @@ int main(int argc, char *argv[])
     //Cargar datos de configuracion
     if(configuracion.modoOperacion()==AcoPiConfiguracion::Depuracion) {
         //Preparar modelo intermedio
-        mIntermedio=new QmlModeloIntermedio(modeloDepuracion(),&app);
+        mIntermedio=new QmlModeloIntermedio(modeloDepuracion(),configuracion.fechaFija(),configuracion.horaFija(),&app);
         engine.rootContext()->setContextProperty("modeloAct",mIntermedio);
     }
     else {
@@ -112,11 +112,7 @@ int main(int argc, char *argv[])
             exit(1);
         }
         //Crear modelo intermedio de base de datos
-        QmlMIQueryModel *miActividad=new QmlMIQueryModel(&app);
-        if(configuracion.isFechaFija())
-            miActividad->setFechaFija(configuracion.fechaFija());
-        if(configuracion.isHoraFija())
-            miActividad->setHoraFija(configuracion.horaFija());
+        QmlMIQueryModel *miActividad=new QmlMIQueryModel(&app,configuracion.fechaFija(),configuracion.horaFija());
         miActividad->setClockDrift(60*60*configuracion.clockDriftHour());
         miActividad->reloadModelo();
         engine.rootContext()->setContextProperty("modeloAct",miActividad);
