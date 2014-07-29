@@ -2,6 +2,8 @@
 #define ACOPICONFIGURACION_H
 
 #include <QString>
+#include <QDate>
+#include <QTime>
 
 /*!
  * Clase que contiene la configuracion básica de AcolitoPi
@@ -61,6 +63,24 @@ public:
     double clockDriftHour() const
     { return _clockDrift_hour; }
 
+    QDate fechaFija() const
+    { return _fechaFija; }
+
+    QTime horaFija() const
+    { return _horaFija; }
+
+    bool isHoraFija() const
+    { return !_horaFija.isNull(); }
+
+    bool isFechaFija() const
+    { return !_fechaFija.isNull(); }
+
+    void unsetHoraFija()
+    { _horaFija=QTime(); }
+
+    void unsetFechaFija()
+    { _fechaFija=QDate(); }
+
     void setModoOperacion(ModoAcceso m);
     void setModoAcolito(ModoAcolito m);
     void setDatabaseUser(QString user);
@@ -73,6 +93,8 @@ public:
     void setDescripcionFontSize(double d);
     void setRequisitosFontSize(double d);
     void setClockDriftHour(double d);
+    void setHoraFija(QTime h);
+    void setFechaFija(QDate d);
 
     void setPathAnuncios(QString p);
 
@@ -91,6 +113,8 @@ private:
     double _descripcionFontSize;
     double _requisitosFontSize;
     double _clockDrift_hour;
+    QDate _fechaFija;
+    QTime _horaFija;
 
     QString _pathAnuncios;
 };

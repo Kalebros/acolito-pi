@@ -23,6 +23,8 @@ AcoPiConfiguracion::AcoPiConfiguracion(ModoAcceso operacion,ModoAcolito acolito)
     _modoAcolito=acolito;
     _operacion=operacion;
     _dbPort=-1;
+    _fechaFija=QDate();
+    _horaFija=QTime();
 }
 
 AcoPiConfiguracion::~AcoPiConfiguracion()
@@ -93,5 +95,15 @@ void AcoPiConfiguracion::setRequisitosFontSize(double d)
 void AcoPiConfiguracion::setClockDriftHour(double d)
 {
     _clockDrift_hour=d;
+}
+
+void AcoPiConfiguracion::setHoraFija(QTime h)
+{
+    _horaFija=h;
+}
+
+void AcoPiConfiguracion::setFechaFija(QDate d)
+{
+    _fechaFija=d;
 }
 

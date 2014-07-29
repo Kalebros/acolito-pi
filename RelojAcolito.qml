@@ -11,7 +11,8 @@ Item {
     function timeModByDrift()
     {
         var fecha=new Date();
-        fecha.setUTCHours(fecha.getUTCHours()+clockDrift_hour);
+        if(clockDrift_hour!==0)
+            fecha.setUTCHours(fecha.getUTCHours()+clockDrift_hour);
         return fecha;
     }
 

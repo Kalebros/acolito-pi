@@ -113,8 +113,10 @@ int main(int argc, char *argv[])
         }
         //Crear modelo intermedio de base de datos
         QmlMIQueryModel *miActividad=new QmlMIQueryModel(&app);
-        miActividad->setFechaFija(QDate(2013,8,2));
-//        miActividad->setHoraFija(QTime(0,0));
+        if(configuracion.isFechaFija())
+            miActividad->setFechaFija(configuracion.fechaFija());
+        if(configuracion.isHoraFija())
+            miActividad->setHoraFija(configuracion.horaFija());
         miActividad->setClockDrift(60*60*configuracion.clockDriftHour());
         miActividad->reloadModelo();
         engine.rootContext()->setContextProperty("modeloAct",miActividad);

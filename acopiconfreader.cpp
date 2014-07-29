@@ -100,6 +100,12 @@ void AcoPiConfReader::readJSONConfiguracion(AcoPiConfiguracion &c, Plataforma mo
     c.setDescripcionFontSize(data.value("fontSize_descripcion").toDouble());
     c.setRequisitosFontSize(data.value("fontSize_requisitos").toDouble());
     c.setClockDriftHour(data.value("clockDrift_hour").toDouble());
+
+    if(data.contains("diaFijo"))
+        c.setFechaFija(QDate::fromString(data.value("diaFijo").toString(),"yyyy-MM-dd"));
+    if(data.contains("horaFija"))
+        c.setHoraFija(QTime::fromString(data.value("horaFija").toString(),"hh:mm"));
+
     qDebug() << "Configuracion READY!";
 
 }

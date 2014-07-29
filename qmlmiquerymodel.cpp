@@ -25,7 +25,7 @@ QmlMIQueryModel::QmlMIQueryModel(QObject *parent) :
             "DATE_FORMAT(horaInicio, '%k:%i') as hInicio, DATE_FORMAT(horaFin, '%k:%i') as hFin, "
             "minimoParticipantes as minParticipantes,maximoParticipantes as maxParticipantes,lugar,"
             "descripcion,requisitos FROM actividad WHERE dia='%1' AND "
-            "horaInicio BETWEEN '%2' AND '%3'";
+            "horaInicio BETWEEN '%2' AND '%3' ORDER BY horaInicio ASC";
 
     QSqlQueryModel *mQuery=new QSqlQueryModel(this);
 
@@ -42,8 +42,8 @@ QmlMIQueryModel::QmlMIQueryModel(QObject *parent) :
         cTime=QTime::currentTime();
     else cTime=_horaFija;
 
-    hPosterior=cTime.addSecs(30*60);
-    hAnterior=cTime.addSecs(-(30*60));
+    hPosterior=cTime.addSecs(60*60);
+    hAnterior=cTime.addSecs(-(60*60));
 
     QString query=_internBasicQuery.arg(fecha.toString("yyyy-MM-dd")).arg(hAnterior.toString("hh:mm:00")).arg(hPosterior.toString("hh:mm:00"));
     mQuery->setQuery(query,QSqlDatabase::database());
@@ -73,8 +73,8 @@ bool QmlMIQueryModel::reloadModelo()
     }
     else cTime=_horaFija;
 
-    hPosterior=cTime.addSecs(30*60);
-    hAnterior=cTime.addSecs(-(30*60));
+    hPosterior=cTime.addSecs(60*60);
+    hAnterior=cTime.addSecs(-(60*60));
 
     QString query=_internBasicQuery.arg(fecha.toString("yyyy-MM-dd")).arg(hAnterior.toString("hh:mm:00")).arg(hPosterior.toString("hh:mm:00"));
     mQuery->setQuery(query,QSqlDatabase::database());
